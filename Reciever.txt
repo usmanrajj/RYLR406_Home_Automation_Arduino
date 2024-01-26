@@ -1,0 +1,65 @@
+/*
+YouTube : Rajj Engineering
+Video Link : 
+This code is For Reciever 
+*/
+// define the GPIO connected with Relays and switches
+#define RelayPin1 11  //D11
+#define RelayPin2 10  //D10
+#define RelayPin3 9 //D9
+#define RelayPin4 8 //D8
+
+#define sLed   13   //D13
+
+String incomingString;
+
+void setup()
+{
+  Serial.begin(115200);
+
+  pinMode(RelayPin1, OUTPUT);
+  pinMode(RelayPin2, OUTPUT);
+  pinMode(RelayPin3, OUTPUT);
+  pinMode(RelayPin4, OUTPUT);
+
+  pinMode(sLed, OUTPUT);
+
+  //During Starting all Relays should TURN OFF
+  digitalWrite(RelayPin1, HIGH);
+  digitalWrite(RelayPin2, HIGH);
+  digitalWrite(RelayPin3, HIGH);
+  digitalWrite(RelayPin4, HIGH);
+
+  digitalWrite(sLed, HIGH);
+}
+
+void loop()
+{ 
+  lora_control();
+}
+
+void lora_control(){
+  
+  if(Serial.available()) {
+    incomingString = Serial.readString();
+    digitalWrite(sLed, LOW);
+    if(incomingString.indexOf("R1") >0) {
+      digitalWrite(RelayPin1, !digitalRead(RelayPin1));
+      Serial.println("AT+SEND=121,6,FR1");
+    }
+    else if(incomingString.indexOf("R2") >0) {
+      digitalWrite(RelayPin2, !digitalRead(RelayPin2));
+      Serial.println("AT+SEND=121,6,FR2");
+    }
+    else if(incomingString.indexOf("R3") >0) {
+      digitalWrite(RelayPin3, !digitalRead(RelayPin3));
+      Serial.println("AT+SEND=121,6,FR3");
+    }
+    else if(incomingString.indexOf("R4") >0) {
+      digitalWrite(RelayPin4, !digitalRead(RelayPin4));
+      Serial.println("AT+SEND=121,6,FR4");
+    }
+   delay(100);
+   digitalWrite(sLed, HIGH);
+ }
+}
